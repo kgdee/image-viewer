@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Viewer</title>
+  <link rel="icon" href="favicon.png" type="image/x-icon">
+  <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div id="drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)"></div>
+  <img id="image" src="image.png" draggable="false">
+  <p class="msg">Select Image or drag and drop an image here</p>
+</body>
+</html>
