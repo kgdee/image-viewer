@@ -9,7 +9,7 @@ document.body.addEventListener('mousedown', startDrag);
 document.body.addEventListener('mousemove', drag);
 document.body.addEventListener('mouseup', stopDrag);
 document.body.addEventListener('mouseleave', stopDrag);
-document.body.addEventListener('wheel', zoom);
+document.body.addEventListener('wheel', (e)=>zoom(e.deltaY));
 
 let distanceX = 0
 let distanceY = 0
@@ -43,9 +43,9 @@ function stopDrag() {
     document.body.style.cursor = 'grab';
 }
 
-function zoom(e) {
+function zoom(direction) {
   image.style.transform = `translate(-50%, -50%)`
-  const scale = e.deltaY > 0 ? 0.9 : 1.1 // adjust the zoom speed as needed
+  const scale = direction > 0 ? 0.9 : 1.1 // adjust the zoom speed as needed
   
   currentSize.x *= scale
   currentSize.y *= scale
@@ -105,3 +105,10 @@ function displayImage(imageUrl) {
   image.src = imageUrl
   msg.classList.add("hidden")
 }
+
+
+document.addEventListener("keydown", function(event) {
+  event.preventDefault()
+  if (event.key === "ArrowUp") zoom(-1)
+  if (event.key === "ArrowDown") zoom(1)
+})
