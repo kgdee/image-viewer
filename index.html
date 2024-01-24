@@ -11,7 +11,14 @@
 </head>
 <body>
   <div id="drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)"></div>
-  <img id="image" src="image.png" draggable="false">
-  <p class="msg">Select Image or drag and drop an image here</p>
+  <img id="image" draggable="false" class="hidden">
+  <div class="panel">
+    <i class="bi bi-image icon"></i>
+    <label class="image-input">
+      Select Image
+      <input type="file" class="hidden">
+    </label>
+    <p class="msg">or drag and drop an image here</p>
+  </div>
 </body>
 </html>

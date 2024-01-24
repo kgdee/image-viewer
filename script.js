@@ -1,7 +1,8 @@
 
 
 const image = document.getElementById('image');
-const msg = document.querySelector(".msg")
+const imageInput = document.querySelector(".image-input")
+const panel = document.querySelector(".panel")
 
 let isDragging = false;
 
@@ -56,6 +57,17 @@ function zoom(direction) {
   // image.style.top = `${currentSize.y - (currentSize.y / 2)}px`
 }
 
+function cover() {
+  image.style.width = "100%"
+  image.style.height = "100%"
+  image.style.left = "50%"
+  image.style.top = "50%"
+  currentSize = {
+    x: image.clientWidth,
+    y: image.clientHeight
+  }
+}
+
 
 function toggleFullscreen() {
   if (document.fullscreenElement) {
@@ -65,50 +77,73 @@ function toggleFullscreen() {
   }
 }
 
-document.addEventListener("keydown", function(event) {
-  if (event.key === "f") toggleFullscreen()
-})
-
 
 
 function handleDragOver(event) {
   event.preventDefault();
 }
 
-function handleDrop(event) {
+async function handleDrop(event) {
   event.preventDefault();
 
   // Access the dropped files
   const files = event.dataTransfer.files;
 
-  // Check if any files were dropped
-  if (files.length > 0) {
-    const imageFile = files[0];
-
-    // Check if the dropped file is an image
-    if (imageFile.type.startsWith('image/')) {
-      // Read the image file
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const imageUrl = e.target.result;
-        // Do something with the image URL, for example, display it
-        displayImage(imageUrl);
-      };
-      reader.readAsDataURL(imageFile);
-    } else {
-      alert('Please drop an image file.');
+  try {
+    if (files.length > 0) {
+      const imageFile = files[0];
+  
+      if (imageFile.type.startsWith('image/')) {
+        const imageUrl = await readFile(imageFile)
+        displayImage(imageUrl)
+      } else {
+        alert('Please drop an image file.');
+      }
     }
+  } catch (error) {
+    console.error(error)
   }
 }
 
 function displayImage(imageUrl) {
+  image.classList.remove("hidden")
   image.src = imageUrl
-  msg.classList.add("hidden")
+  panel.classList.add("hidden")
+
+  currentSize = {
+    x: image.clientWidth,
+    y: image.clientHeight
+  }
+  
+  image.style.transform = "translate(-50%, -50%)"
+  image.style.left = `${currentSize.x / 2}px`
+  image.style.top = `${currentSize.y / 2}px`
+}
+
+
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      resolve(e.target.result);
+    };
+
+    reader.onerror = function (error) {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
 }
 
 
 document.addEventListener("keydown", function(event) {
   event.preventDefault()
+
+  if (event.code === 'KeyF') toggleFullscreen()
+  if (event.code === 'KeyC') cover()
+
   if (event.key === "ArrowUp") zoom(-1)
   if (event.key === "ArrowDown") zoom(1)
 })
