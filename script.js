@@ -2,9 +2,7 @@
 
 const image = document.getElementById('image');
 const imageInput = document.querySelector(".image-input")
-const panel = document.querySelector(".panel")
-
-let isDragging = false;
+const startPanel = document.querySelector(".start-panel")
 
 document.body.addEventListener('mousedown', startDrag);
 document.body.addEventListener('mousemove', drag);
@@ -12,94 +10,100 @@ document.body.addEventListener('mouseup', stopDrag);
 document.body.addEventListener('mouseleave', stopDrag);
 document.body.addEventListener('wheel', (e)=>zoom(e.deltaY));
 
+
+let dragging = false
+
 let distanceX = 0
 let distanceY = 0
 
-let currentSize = {
-  x: image.clientWidth,
-  y: image.clientHeight
-}
-
-image.style.transform = "translate(-50%, -50%)"
-image.style.left = `${currentSize.x / 2}px`
-image.style.top = `${currentSize.y / 2}px`
 
 function startDrag(e) {
-  isDragging = true;
+  dragging = true
+
   document.body.style.cursor = 'grabbing';
 
-  var rect = image.getBoundingClientRect()
+  let rect = image.getBoundingClientRect()
   distanceX = e.clientX - rect.x
   distanceY = e.clientY - rect.y
 }
 
 function drag(e) {
-  if (!isDragging) return;
-  image.style.left = `${e.clientX - distanceX + (currentSize.x / 2)}px`
-  image.style.top = `${e.clientY - distanceY + (currentSize.y / 2)}px`
+  if (!dragging) return
+
+  const posX = `${e.clientX - distanceX + (image.clientWidth / 2)}px`
+  const posY = `${e.clientY - distanceY + (image.clientHeight / 2)}px`
+  setImagePosition(posX, posY)
 }
 
 function stopDrag() {
-    isDragging = false;
-    document.body.style.cursor = 'grab';
+  dragging = false
+  document.body.style.cursor = 'grab';
+}
+
+function setImagePosition(left, top) {
+  image.style.left = left
+  image.style.top = top
+}
+
+function moveImage(x, y) {
+  const left = `${parseFloat(getComputedStyle(image).left) + x}px`
+  const top = `${parseFloat(getComputedStyle(image).top) + y}px`
+
+  setImagePosition(left, top)
+}
+
+function resizeImage(width, height) {
+  image.style.width = width
+  image.style.height = height
 }
 
 function zoom(direction) {
-  image.style.transform = `translate(-50%, -50%)`
   const scale = direction > 0 ? 0.9 : 1.1 // adjust the zoom speed as needed
   
-  currentSize.x *= scale
-  currentSize.y *= scale
-  image.style.width = `${currentSize.x}px`;
-  image.style.height = `${currentSize.y}px`;
+  const width = `${image.clientWidth * scale}px`
+  const height = `${image.clientHeight * scale}px`
 
-  // image.style.left = `${currentSize.x - (currentSize.x / 2)}px`
-  // image.style.top = `${currentSize.y - (currentSize.y / 2)}px`
+  resizeImage(width, height)
 }
 
 function cover() {
-  image.style.width = "100%"
-  image.style.height = "100%"
-  image.style.left = "50%"
-  image.style.top = "50%"
-  currentSize = {
-    x: image.clientWidth,
-    y: image.clientHeight
-  }
+  const screenWidth = window.innerWidth
+  const screenHeight = window.innerHeight
+  const screenRatio = screenWidth / screenHeight;
+
+  resizeImage("100%","100%")
+
+  const imgRatio = image.width / image.height
+
+  const width = screenRatio > imgRatio ? "100%" : "auto"
+  const height = screenRatio > imgRatio ? "auto" : "100%"
+  resizeImage(width, height)
+
+  setImagePosition("50%","50%")
 }
-
-
-function toggleFullscreen() {
-  if (document.fullscreenElement) {
-    document.exitFullscreen();
-  } else {
-    document.body.requestFullscreen();
-  }
-}
-
 
 
 function handleDragOver(event) {
-  event.preventDefault();
+  event.preventDefault()
+}
+function handleDrop(event) {
+  event.preventDefault()
+
+  const files = event.dataTransfer.files
+  handleFile(files)
 }
 
-async function handleDrop(event) {
-  event.preventDefault();
-
-  // Access the dropped files
-  const files = event.dataTransfer.files;
-
+async function handleFile(files) {
   try {
-    if (files.length > 0) {
-      const imageFile = files[0];
+    if (files.length <= 0) return
+
+    const imageFile = files[0]
   
-      if (imageFile.type.startsWith('image/')) {
-        const imageUrl = await readFile(imageFile)
-        displayImage(imageUrl)
-      } else {
-        alert('Please drop an image file.');
-      }
-    }
+    if (!imageFile.type.startsWith('image/')) return
+    
+    const imageUrl = await readFile(imageFile)
+    displayImage(imageUrl)
+
   } catch (error) {
     console.error(error)
   }
@@ -108,16 +112,8 @@ async function handleDrop(event) {
 function displayImage(imageUrl) {
   image.classList.remove("hidden")
   image.src = imageUrl
-  panel.classList.add("hidden")
-
-  currentSize = {
-    x: image.clientWidth,
-    y: image.clientHeight
-  }
-  
-  image.style.transform = "translate(-50%, -50%)"
-  image.style.left = `${currentSize.x / 2}px`
-  image.style.top = `${currentSize.y / 2}px`
+  startPanel.classList.add("hidden")
+  cover()
 }
 
 
@@ -138,12 +134,41 @@ function readFile(file) {
 }
 
 
+function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    document.body.requestFullscreen();
+  }
+}
+
+
 document.addEventListener("keydown", function(event) {
-  event.preventDefault()
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+    event.preventDefault()
+  }
 
   if (event.code === 'KeyF') toggleFullscreen()
   if (event.code === 'KeyC') cover()
 
-  if (event.key === "ArrowUp") zoom(-1)
-  if (event.key === "ArrowDown") zoom(1)
+  if (event.code === 'Equal' || event.code === 'BracketRight') zoom(-1)
+  if (event.code === 'Minus' || event.code === 'BracketLeft') zoom(1)
+  
+  switch (event.key) {
+    case 'ArrowUp':
+      moveImage(0, -10)
+      break
+    case 'ArrowDown':
+      moveImage(0, 10)
+      break
+    case 'ArrowLeft':
+      moveImage(-10, 0)
+      break
+    case 'ArrowRight':
+      moveImage(10, 0)
+      break
+    default:
+      break
+  }
+  
 })

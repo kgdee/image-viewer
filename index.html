@@ -10,15 +10,19 @@
   <script src="script.js" defer></script>
 </head>
 <body>
-  <div id="drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)"></div>
-  <img id="image" draggable="false" class="hidden">
-  <div class="panel">
-    <i class="bi bi-image icon"></i>
-    <label class="image-input">
-      Select Image
-      <input type="file" class="hidden">
-    </label>
-    <p class="msg">or drag and drop an image here</p>
+  <div id="drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+    <img id="image" draggable="false" class="hidden">
+    <div class="start-panel">
+      <i class="bi bi-image icon"></i>
+      <label class="image-input">
+        Select Image
+        <input type="file" class="hidden" oninput="handleFile(this.files)">
+      </label>
+      <p class="msg">or, drag and drop an image here</p>
+      <div class="tips">
+        Keyboard shortcuts: Toggle full screen (f), Cover (c), Pan (→ ← ↑ ↓), Zoom (- + [ ])
+      </div>
+    </div>
   </div>
 </body>
 </html>
