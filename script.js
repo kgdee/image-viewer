@@ -169,7 +169,7 @@ function stopAnimation() {
 function animation() {
   const x = Math.random() * 10 - 5
   const y = Math.random() * 10 - 5
-  const scale = 1 + (Math.random() * 0.05)
+  const scale = 1 + (Math.random() * 0.02)
 
   moveImage(x, y)
   image.style.transform = `translate(-50%, -50%) scale(${scale})`
