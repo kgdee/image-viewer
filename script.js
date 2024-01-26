@@ -16,8 +16,14 @@ let dragging = false
 let distanceX = 0
 let distanceY = 0
 
+let isFillScreen = false
+let animationInterval = null
+let animated = false
+
 
 function startDrag(e) {
+  if (animated) stopAnimation()
+  
   dragging = true
 
   document.body.style.cursor = 'grabbing';
@@ -58,27 +64,28 @@ function resizeImage(width, height) {
 }
 
 function zoom(direction) {
-  const scale = direction > 0 ? 0.9 : 1.1 // adjust the zoom speed as needed
-  
-  const width = `${image.clientWidth * scale}px`
-  const height = `${image.clientHeight * scale}px`
+  if (animated) stopAnimation()
 
-  resizeImage(width, height)
+  const scale = direction > 0 ? 0.9 : 1.1 // adjust the zoom speed as needed
+
+  resizeImage(`${image.width * scale}px`, `${image.height * scale}px`)
 }
 
-function cover() {
-  const screenWidth = window.innerWidth
-  const screenHeight = window.innerHeight
-  const screenRatio = screenWidth / screenHeight;
-
-  resizeImage("100%","100%")
-
+function fillScreen() {
+  isFillScreen = true
+  const screenRatio = window.innerWidth / window.innerHeight
+  resizeImage("100px","auto")
   const imgRatio = image.width / image.height
-
   const width = screenRatio > imgRatio ? "100%" : "auto"
   const height = screenRatio > imgRatio ? "auto" : "100%"
   resizeImage(width, height)
 
+  setImagePosition("50%","50%")
+}
+
+function fitScreen() {
+  isFillScreen = false
+  resizeImage("100%", "100%")
   setImagePosition("50%","50%")
 }
 
@@ -113,7 +120,7 @@ function displayImage(imageUrl) {
   image.classList.remove("hidden")
   image.src = imageUrl
   startPanel.classList.add("hidden")
-  cover()
+  fillScreen()
 }
 
 
@@ -143,13 +150,41 @@ function toggleFullscreen() {
 }
 
 
+function startAnimation() {
+  animated = true
+  fillScreen()
+  resizeImage(`${image.width + 10}px`, `${image.height + 10}px`)
+  image.style.transition = "1s"
+
+  clearInterval(animationInterval)
+  animationInterval = setInterval(animation, 500)
+}
+
+function stopAnimation() {
+  animated = false
+  image.style.transition = null
+  clearInterval(animationInterval)
+}
+
+function animation() {
+  const x = Math.random() * 10 - 5
+  const y = Math.random() * 10 - 5
+  const scale = 1 + (Math.random() * 0.05)
+
+  moveImage(x, y)
+  image.style.transform = `translate(-50%, -50%) scale(${scale})`
+}
+
+
+
 document.addEventListener("keydown", function(event) {
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
     event.preventDefault()
   }
 
   if (event.code === 'KeyF') toggleFullscreen()
-  if (event.code === 'KeyC') cover()
+  if (event.code === 'KeyC') isFillScreen ? fitScreen() : fillScreen()
+  if (event.code === 'KeyA') animated ? stopAnimation() : startAnimation()
 
   if (event.code === 'Equal' || event.code === 'BracketRight') zoom(-1)
   if (event.code === 'Minus' || event.code === 'BracketLeft') zoom(1)
