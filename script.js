@@ -1,12 +1,14 @@
+const dropArea = document.querySelector(".drop-area");
 const image = document.querySelector(".image");
 const imageInput = document.querySelector(".image-input");
 const inputModal = document.querySelector(".input-modal");
+const zoomSlider = document.querySelector(".zoom-slider");
 
-document.body.addEventListener("pointerdown", startDrag);
-document.body.addEventListener("pointermove", drag);
-document.body.addEventListener("pointerup", stopDrag);
-document.body.addEventListener("pointerleave", stopDrag);
-document.body.addEventListener("wheel", (e) => zoom(e.deltaY));
+dropArea.addEventListener("pointerdown", startDrag);
+dropArea.addEventListener("pointermove", drag);
+dropArea.addEventListener("pointerup", stopDrag);
+dropArea.addEventListener("pointerleave", stopDrag);
+dropArea.addEventListener("wheel", (e) => zoom(e.deltaY));
 
 let dragging = false;
 
@@ -17,7 +19,13 @@ let isFillScreen = false;
 let animationInterval = null;
 let isAnimating = false;
 
+let activePointerId = null;
+
 function startDrag(e) {
+  if (activePointerId) return;
+
+  activePointerId = e.pointerId;
+
   if (isAnimating) stopAnimation();
 
   dragging = true;
@@ -30,6 +38,7 @@ function startDrag(e) {
 }
 
 function drag(e) {
+  if (e.pointerId !== activePointerId) return;
   if (!dragging) return;
 
   const posX = `${e.clientX - distanceX + image.clientWidth / 2}px`;
@@ -37,7 +46,10 @@ function drag(e) {
   setImagePosition(posX, posY);
 }
 
-function stopDrag() {
+function stopDrag(e) {
+  if (e.pointerId !== activePointerId) return;
+  activePointerId = null;
+
   dragging = false;
   document.body.style.cursor = "grab";
 }
@@ -57,6 +69,10 @@ function moveImage(x, y) {
 function resizeImage(width, height) {
   image.style.width = width;
   image.style.height = height;
+}
+
+function zoomByValue(value) {
+  resizeImage(`${value}%`, `${value}%`);
 }
 
 function zoom(direction) {
@@ -114,6 +130,7 @@ function displayImage(imageUrl) {
   image.classList.remove("hidden");
   image.src = imageUrl;
   inputModal.classList.add("hidden");
+  zoomSlider.classList.remove("hidden");
   fillScreen();
 }
 
