@@ -1,37 +1,67 @@
 /*==================== GOOGLE FONTS ====================*/
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 /*==================== BOOTSTRAP ICONS ====================*/
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
 
-
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-  line-height: 1;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  border: none;
+  text-decoration: none;
+  line-height: 1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-html, body {
-  overflow: hidden;
-  width: 100%;
-  height: 100vh;
+*::-webkit-scrollbar {
+  display: none;
 }
 
-body {
-  cursor: grab;
-  font-family: 'Poppins', sans-serif;
-  background-color: #111;
+a,
+button {
+  cursor: pointer;
+}
+
+.button {
+  display: inline-block;
+  padding: 8px 16px;
+  background: var(--green);
   color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.truncated {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hidden {
   display: none !important;
 }
 
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #111;
+  color: white;
+}
 
-#image {
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.image {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -41,23 +71,23 @@ body {
   transform: translate(-50%, -50%);
 }
 
-#drop-area {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+.drop-area {
+  touch-action: none;
+}
+
+.input-modal {
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.start-panel {
+.input-modal .modal-content {
   position: relative;
   width: 300px;
   min-height: 200px;
-  background-color: #6E99F3;
+  background-color: #6e99f3;
   color: #333;
   border: 5px dashed white;
   display: flex;
@@ -66,7 +96,7 @@ body {
   justify-content: center;
 }
 
-.start-panel .icon {
+.input-modal .icon {
   color: white;
   font-size: 3rem;
   margin-bottom: 20px;
@@ -80,7 +110,7 @@ body {
   margin-bottom: 10px;
 }
 
-.start-panel .tips {
+.input-modal .tips {
   position: absolute;
   left: 50%;
   top: calc(100% + 20px);

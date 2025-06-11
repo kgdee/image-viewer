@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer</title>
-  <link rel="icon" href="favicon.png" type="image/x-icon">
-  <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <div id="drop-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-    <img id="image" draggable="false" class="hidden">
-    <div class="start-panel">
-      <i class="bi bi-image icon"></i>
-      <label class="image-input">
-        Select Image
-        <input type="file" class="hidden" oninput="handleFile(this.files)">
-      </label>
-      <p class="msg">or, drag and drop an image here</p>
-      <div class="tips">
-        Keyboard shortcuts: Toggle full screen (f), Cover (c), Pan (→ ← ↑ ↓), Zoom (- + [ ]), Animation (a)
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Viewer</title>
+    <link rel="icon" href="favicon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="drop-area overlay" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+      <img class="image hidden" draggable="false" />
+
+      <div class="input-modal overlay">
+        <div class="modal-content">
+          <i class="bi bi-image icon"></i>
+          <label class="image-input">
+            Select Image
+            <input type="file" class="hidden" oninput="handleFile(this.files)" />
+          </label>
+          <p class="msg">or, drag and drop an image here</p>
+          <div class="tips">Keyboard shortcuts: Toggle full screen (f), Cover (c), Pan (→ ← ↑ ↓), Zoom (- + [ ]), Animation (a)</div>
+        </div>
       </div>
+
     </div>
-  </div>
-</body>
+  </body>
 </html>
