@@ -7,27 +7,39 @@
     <link rel="icon" href="favicon.png" type="image/x-icon" />
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="style.css" />
-    <script src="script.js" defer></script>
-  </head>
-  <body>
-    <div class="drop-area overlay" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
-      <img class="image hidden" draggable="false" />
+    <script src="https://unpkg.com/@panzoom/panzoom@4.6.0/dist/panzoom.min.js"></script>
 
-      <div class="input-modal overlay">
-        <div class="modal-content">
+    <script src="scripts/constants.js" defer></script>
+    <script src="scripts/utils.js" defer></script>
+    <script src="scripts/main.js" defer></script>
+  </head>
+  <body class="dark-theme">
+    <div id="drop-area" class="app" ondrop="handleDrop(event)">
+      <div class="screen input-screen">
+        <label class="image-input">
           <i class="bi bi-image icon"></i>
-          <label class="image-input">
-            Select Image
-            <input type="file" class="hidden" oninput="handleFile(this.files)" />
-          </label>
-          <p class="msg">or, drag and drop an image here</p>
-          <div class="tips">Keyboard shortcuts: Toggle full screen (f), Cover (c), Pan (→ ← ↑ ↓), Zoom (- + [ ]), Animation (a)</div>
-        </div>
+          <span class="button">
+            Choose Image
+            <input type="file" class="hidden" oninput="handleFileInput(this.files[0])" />
+          </span>
+          <p>or drag and drop an image here</p>
+        </label>
+        <div class="message">Keyboard shortcuts: Toggle full screen (f), Cover (c), Pan (→ ← ↑ ↓), Zoom (- + [ ]), Animation (a)</div>
       </div>
 
+      <div class="screen image-screen hidden">
+        <div id="image-container">
+          <img class="image" draggable="false" />
+        </div>
+
+        <div class="control-bar">
+          <button class="item" onclick="toggleJitter()"><i class="bi bi-activity"></i></button>
+          <button class="item" onclick="changeAnimation()"><i class="bi bi-play-btn"></i></button>
+          <button class="item" onclick="goHome()"><i class="bi bi-house-door"></i></button>
+          <button class="item" onclick="fitScreen()"><i class="bi bi-arrows-fullscreen"></i></button>
+          <button class="item" onclick="toggleFullscreen()"><i class="bi bi-fullscreen"></i></button>
+        </div>
+      </div>
     </div>
-
-    <input type="range" class="zoom-slider hidden" oninput="zoomByValue(this.value)" min="50" max="200" value="100">
-
   </body>
 </html>
