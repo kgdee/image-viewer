@@ -7,7 +7,8 @@ const imageContainer = document.getElementById("image-container");
 const imageEl = imageContainer.querySelector("img");
 const controlBar = document.querySelector(".control-bar");
 
-let currentImage = null;
+let currentFiles = [];
+let currentFile = -1;
 let isImageDisplayed = false;
 let jitterInterval = null;
 let isJittering = false;
@@ -33,22 +34,24 @@ function fitScreen() {
 function handleDrop(event) {
   event.preventDefault();
 
-  const files = event.dataTransfer.files[0];
-  handleFileInput(files);
+  const files = event.dataTransfer.files;
+  handleFiles(files);
 }
 
-async function handleFileInput(file) {
-  if (!file) return;
+function handleFiles(files) {
+  if (files.length <= 0) return;
 
-  if (!file.type.startsWith("image/")) return;
+  files = Array.from(files);
+  currentFiles = files.filter((file) => file.type.startsWith("image/"));
 
-  currentImage = await getFileDataUrl(file);
-  displayImage();
+  displayImage(0);
 }
 
-function displayImage() {
+async function displayImage(fileIndex) {
+  currentFile = clamp(fileIndex, 0, currentFiles.length - 1);
+  const file = currentFiles[currentFile];
   imageInput.value = "";
-  imageEl.src = currentImage;
+  imageEl.src = await getFileDataUrl(file);
   changeScreen("image-screen");
   isImageDisplayed = true;
   fitScreen();
@@ -71,6 +74,7 @@ function changeAnimation() {
   animationDuration = duration;
 
   const shouldAnimate = animationDuration > 0;
+  !isJittering && shouldAnimate ? toggleJitter(true) : toggleJitter(false);
   imageContainer.style.animation = shouldAnimate ? `shaking ${animationDuration}s ease-in-out infinite` : null;
 }
 
@@ -78,8 +82,10 @@ function stopAnimation() {
   imageContainer.style.animation = null;
 }
 
-function toggleJitter() {
+function toggleJitter(force) {
   if (!isImageDisplayed) return;
+  if (!isJittering && force === false) return;
+  if (isJittering && force === true) return;
 
   if (isJittering) {
     isJittering = false;
@@ -95,11 +101,11 @@ function toggleJitter() {
 }
 
 function jitter() {
-  const x = Math.random() * 1;
-  const y = Math.random() * 1;
+  const x = Math.random() * 16;
+  const y = Math.random() * 16;
   const scale = 1 + Math.random() * 0.02;
 
-  imageContainer.style.transform = `translate(${x}%, ${y}%) scale(${scale})`;
+  imageContainer.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
 }
 
 function moveImage(x, y) {
@@ -107,6 +113,7 @@ function moveImage(x, y) {
 }
 
 const keyActions = {
+  Space: () => displayImage(currentFile + 1),
   KeyF: toggleFullscreen,
   KeyC: fitScreen,
   KeyA: changeAnimation,

@@ -20,7 +20,7 @@
           <i class="bi bi-image icon"></i>
           <span class="button">
             Choose Image
-            <input type="file" class="hidden" oninput="handleFileInput(this.files[0])" />
+            <input type="file" accept="image/*" class="hidden" oninput="handleFiles(this.files)" multiple />
           </span>
           <p>or drag and drop an image here</p>
         </label>
@@ -33,11 +33,13 @@
         </div>
 
         <div class="control-bar">
-          <button class="item" onclick="toggleJitter()"><i class="bi bi-activity"></i></button>
-          <button class="item" onclick="changeAnimation()"><i class="bi bi-play-btn"></i></button>
-          <button class="item" onclick="goHome()"><i class="bi bi-house-door"></i></button>
-          <button class="item" onclick="fitScreen()"><i class="bi bi-arrows-fullscreen"></i></button>
-          <button class="item" onclick="toggleFullscreen()"><i class="bi bi-fullscreen"></i></button>
+          <button class="item prev" onclick="displayImage(currentFile - 1)"><i class="bi bi-arrow-left"></i></button>
+          <button class="item jitter" onclick="toggleJitter()"><i class="bi bi-activity"></i></button>
+          <button class="item animation" onclick="changeAnimation()"><i class="bi bi-play-btn"></i></button>
+          <button class="item home" onclick="goHome()"><i class="bi bi-house-door"></i></button>
+          <button class="item fit-screen" onclick="fitScreen()"><i class="bi bi-arrows-fullscreen"></i></button>
+          <button class="item fullscreen" onclick="toggleFullscreen()"><i class="bi bi-fullscreen"></i></button>
+          <button class="item next" onclick="displayImage(currentFile + 1)"><i class="bi bi-arrow-right"></i></button>
         </div>
       </div>
     </div>
