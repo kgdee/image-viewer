@@ -87,8 +87,13 @@ body {
 }
 
 .screen {
+  background-color: var(--bg-color);
   width: 100%;
   height: 100%;
+}
+
+.text-muted {
+  opacity: 0.8;
 }
 
 #image-container {
@@ -144,8 +149,7 @@ body {
 .input-screen .message {
   width: 280px;
   font-size: 0.8rem;
-  line-height: 1.5;
-  color: #ccc;
+  line-height: 1.4;
 }
 
 .control-bar {
@@ -193,7 +197,8 @@ body {
     width: 100%;
   }
 
-  .control-bar .jitter, .control-bar .fit-screen {
+  .control-bar .jitter,
+  .control-bar .fit-screen {
     display: none;
   }
 

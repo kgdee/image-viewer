@@ -15,14 +15,13 @@ let isJittering = false;
 let animationDuration = 0;
 
 const panzoom = Panzoom(imageEl, {
-  minScale: 0.1,
-  maxScale: 10,
+  minScale: 0.5,
+  maxScale: 5,
   contain: false,
   cursor: "grab",
 });
 
-// Enable mouse wheel zoom on the whole container
-imageEl.addEventListener("wheel", panzoom.zoomWithWheel, { passive: false });
+imageEl.addEventListener("wheel", panzoom.zoomWithWheel);
 
 function fitScreen() {
   if (!isImageDisplayed) return;
@@ -48,6 +47,9 @@ function handleFiles(files) {
 }
 
 async function displayImage(fileIndex) {
+  if (animationDuration) stopAnimation();
+  if (isJittering) toggleJitter();
+
   currentFile = clamp(fileIndex, 0, currentFiles.length - 1);
   const file = currentFiles[currentFile];
   imageInput.value = "";
@@ -69,8 +71,8 @@ function goHome() {
 function changeAnimation() {
   if (!isImageDisplayed) return;
 
-  let duration = animationDuration - 0.25;
-  if (duration < 0) duration = 1;
+  let duration = parseFloat((animationDuration - 0.2).toFixed(1));
+  if (duration < 0) duration = 0.8;
   animationDuration = duration;
 
   const shouldAnimate = animationDuration > 0;
@@ -79,6 +81,7 @@ function changeAnimation() {
 }
 
 function stopAnimation() {
+  animationDuration = 0;
   imageContainer.style.animation = null;
 }
 
@@ -101,8 +104,8 @@ function toggleJitter(force) {
 }
 
 function jitter() {
-  const x = Math.random() * 16;
-  const y = Math.random() * 16;
+  const x = Math.random() * 10;
+  const y = Math.random() * 10;
   const scale = 1 + Math.random() * 0.02;
 
   imageContainer.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
@@ -138,6 +141,10 @@ document.addEventListener("keydown", (event) => {
 
 document.addEventListener("click", function (event) {
   if (!controlBar.contains(event.target)) {
-    controlBar.classList.toggle("m-hidden");
+    const isHidden = controlBar.classList.contains("m-hidden");
+
+    if (animationDuration !== 0 && isHidden) changeAnimation();
+
+    if (animationDuration === 0 || !isHidden) controlBar.classList.toggle("m-hidden");
   }
 });

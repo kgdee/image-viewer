@@ -7,8 +7,9 @@
     <link rel="icon" href="favicon.png" type="image/x-icon" />
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
     <link rel="stylesheet" href="style.css" />
+    <!-- panzoom library -->
     <script src="https://unpkg.com/@panzoom/panzoom@4.6.0/dist/panzoom.min.js"></script>
-
+    
     <script src="scripts/constants.js" defer></script>
     <script src="scripts/utils.js" defer></script>
     <script src="scripts/main.js" defer></script>
@@ -16,6 +17,8 @@
   <body class="dark-theme">
     <div id="drop-area" class="app" ondrop="handleDrop(event)">
       <div class="screen input-screen">
+        <h1 class="title">Image Viewer</h1>
+        <p class="text-muted">Your Window to Every Pixel</p>
         <label class="image-input">
           <i class="bi bi-image icon"></i>
           <span class="button">
@@ -24,7 +27,7 @@
           </span>
           <p>or drag and drop an image here</p>
         </label>
-        <div class="message">Keyboard shortcuts: Toggle full screen (f), Cover (c), Pan (→ ← ↑ ↓), Zoom (- + [ ]), Animation (a)</div>
+        <div class="message text-muted">Enjoy a fast, sleek, and intuitive way to view, zoom, and organize your photos. Whether it's a quick glance or a deep dive into the details, we've made it seamless.</div>
       </div>
 
       <div class="screen image-screen hidden">
