@@ -15,7 +15,7 @@
     <script src="scripts/main.js" defer></script>
   </head>
   <body class="dark-theme">
-    <div id="drop-area" class="app" ondrop="handleDrop(event)">
+    <div id="drop-area" class="app" ondrop="handleDrop(event)" ondragover="event.preventDefault()">
       <div class="screen input-screen">
         <h1 class="title">Image Viewer</h1>
         <p class="text-muted">Your Window to Every Pixel</p>
