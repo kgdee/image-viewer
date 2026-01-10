@@ -13,6 +13,8 @@ let isImageDisplayed = false;
 let jitterInterval = null;
 let isJittering = false;
 let animationDuration = 0;
+let carouselMode = false;
+let carouselInterval = null;
 
 const panzoom = Panzoom(imageEl, {
   minScale: 0.5,
@@ -46,11 +48,18 @@ function handleFiles(files) {
   displayImage(0);
 }
 
-async function displayImage(fileIndex) {
+async function displayImage(direction = 0) {
   if (animationDuration) stopAnimation();
   if (isJittering) toggleJitter();
 
-  currentFile = clamp(fileIndex, 0, currentFiles.length - 1);
+  direction = Math.sign(direction);
+
+  let fileIndex = 0;
+  if (direction) {
+    fileIndex = wrap(currentFile + direction, 0, currentFiles.length - 1);
+  }
+
+  currentFile = fileIndex;
   const file = currentFiles[currentFile];
   imageInput.value = "";
   imageEl.src = await getFileDataUrl(file);
@@ -66,6 +75,17 @@ function goHome() {
   changeScreen("input-screen");
   imageEl.src = "";
   isImageDisplayed = false;
+}
+
+function toggleCarouselMode() {
+  if (!isImageDisplayed) return;
+  if (currentFiles.length <= 1) return;
+
+  carouselMode = !carouselMode;
+
+  clearInterval(carouselInterval);
+
+  if (carouselMode) carouselInterval = setInterval(() => displayImage(currentFile + 1), 60000);
 }
 
 function changeAnimation() {
@@ -139,12 +159,12 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-document.addEventListener("click", function (event) {
-  if (!controlBar.contains(event.target)) {
-    const isHidden = controlBar.classList.contains("m-hidden");
+document.addEventListener("click", function (e) {
+  if (!controlBar.contains(e.target)) {
+    const isCBHidden = controlBar.classList.contains("hidden-sm");
 
-    if (animationDuration !== 0 && isHidden) changeAnimation();
+    if (animationDuration !== 0 && isCBHidden) changeAnimation();
 
-    if (animationDuration === 0 || !isHidden) controlBar.classList.toggle("m-hidden");
+    if (animationDuration === 0 || !isCBHidden) controlBar.classList.toggle("hidden-sm");
   }
 });
