@@ -97,6 +97,8 @@ body {
 }
 
 #image-container {
+  display: flex;
+  align-items: center;
   overflow: revert !important;
   width: 100%;
   height: 100%;
@@ -105,9 +107,7 @@ body {
 
 #image-container img {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
+  height: auto;
   user-select: none;
 }
 

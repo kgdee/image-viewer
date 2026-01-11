@@ -15,6 +15,7 @@ let isJittering = false;
 let animationDuration = 0;
 let carouselMode = false;
 let carouselInterval = null;
+let isCoverMode = true;
 
 const panzoom = Panzoom(imageEl, {
   minScale: 0.5,
@@ -25,11 +26,26 @@ const panzoom = Panzoom(imageEl, {
 
 imageEl.addEventListener("wheel", panzoom.zoomWithWheel);
 
-function fitScreen() {
+function toggleImageFit() {
   if (!isImageDisplayed) return;
 
+  imageEl.style.transform = null;
+
+  const screenW = window.innerWidth;
+  const screenH = window.innerHeight;
+
+  const imgW = imageEl.getBoundingClientRect().width;
+  const imgH = imageEl.getBoundingClientRect().height;
+
+  const scaleX = screenW / imgW;
+  const scaleY = screenH / imgH;
+
+  const scale = isCoverMode ? Math.min(scaleX, scaleY) : Math.max(scaleX, scaleY);
+
   panzoom.pan(0, 0);
-  panzoom.zoom(1);
+  panzoom.zoom(scale);
+
+  isCoverMode = !isCoverMode;
 }
 
 function handleDrop(event) {
@@ -48,9 +64,11 @@ function handleFiles(files) {
   displayImage(0);
 }
 
-async function displayImage(direction = 0) {
-  if (animationDuration) stopAnimation();
-  if (isJittering) toggleJitter();
+async function displayImage(direction = 0, shouldStopAnimation = true) {
+  if (shouldStopAnimation) {
+    if (animationDuration) stopAnimation();
+    if (isJittering) toggleJitter();
+  }
 
   direction = Math.sign(direction);
 
@@ -65,7 +83,8 @@ async function displayImage(direction = 0) {
   imageEl.src = await getFileDataUrl(file);
   changeScreen("image-screen");
   isImageDisplayed = true;
-  fitScreen();
+  isCoverMode = true;
+  toggleImageFit();
 }
 
 function goHome() {
@@ -85,7 +104,7 @@ function toggleCarouselMode() {
 
   clearInterval(carouselInterval);
 
-  if (carouselMode) carouselInterval = setInterval(() => displayImage(currentFile + 1), 60000);
+  if (carouselMode) carouselInterval = setInterval(() => displayImage(currentFile + 1, false), 60000);
 }
 
 function changeAnimation() {
@@ -138,7 +157,7 @@ function moveImage(x, y) {
 const keyActions = {
   Space: () => displayImage(currentFile + 1),
   KeyF: toggleFullscreen,
-  KeyC: fitScreen,
+  KeyC: toggleImageFit,
   KeyA: changeAnimation,
   KeyJ: toggleJitter,
   Equal: () => zoom(-1),
